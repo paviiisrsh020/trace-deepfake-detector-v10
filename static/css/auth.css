@@ -1,0 +1,90 @@
+#particleCanvas { position: fixed; inset: 0; z-index: 0; pointer-events: auto; }
+
+html { overflow-x: hidden; }
+.auth-body { min-height: 100vh; overflow-x: hidden; width: 100%; }
+
+.landing {
+  position: relative; z-index: 2;
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  align-items: center;
+  gap: 40px;
+  padding: 0 clamp(28px, 5vw, 80px);
+  max-width: 100vw;
+  box-sizing: border-box;
+}
+
+.landing-hero { padding: 60px 0; animation: heroIn 0.9s cubic-bezier(.2,.8,.2,1) both; min-width: 0; }
+@keyframes heroIn { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+
+.auth-brand { display: flex; align-items: center; gap: 10px; margin-bottom: 40px; }
+.auth-brand .brand-name { font-family: var(--mono); font-weight: 700; letter-spacing: .16em; font-size: 18px; }
+.auth-brand .brand-mark { color: var(--amber); font-size: 20px; text-shadow: 0 0 16px #f5ab3d80; }
+
+.hero-headline {
+  font-family: "Sora", var(--mono);
+  font-size: clamp(42px, 5.2vw, 74px);
+  font-weight: 800;
+  line-height: 1.04;
+  letter-spacing: -0.01em;
+  margin: 0 0 22px;
+  color: var(--text);
+}
+.hero-accent {
+  background: linear-gradient(100deg, #f5ab3d, #ef8c57 45%, #5093c9);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+
+.hero-sub {
+  font-size: 16.5px; line-height: 1.65; color: var(--muted);
+  max-width: 480px; margin: 0 0 42px;
+}
+
+.hero-features { display: flex; flex-direction: column; gap: 20px; max-width: 460px; }
+.hero-feature { display: flex; gap: 14px; align-items: flex-start; }
+.hero-feature-icon {
+  width: 34px; height: 34px; flex-shrink: 0; border-radius: 9px;
+  background: var(--panel-2); border: 1px solid var(--line);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--amber); font-size: 15px;
+}
+.hero-feature-title { font-family: var(--sans); font-weight: 600; font-size: 13.5px; color: var(--text); }
+.hero-feature-desc { font-size: 12.5px; color: var(--muted); margin: 3px 0 0; line-height: 1.5; }
+
+.landing-auth { display: flex; justify-content: center; animation: cardIn 0.9s 0.15s cubic-bezier(.2,.8,.2,1) both; }
+@keyframes cardIn { from { opacity: 0; transform: translateY(18px) scale(.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+
+.auth-card {
+  width: 380px; max-width: 100%;
+  background: #11161dcc; border: 1px solid var(--line); border-radius: 18px; padding: 28px 28px 32px;
+  backdrop-filter: blur(16px); box-shadow: 0 30px 80px -30px #000d, 0 0 0 1px #ffffff08 inset;
+}
+.auth-tabs { display: flex; gap: 6px; background: var(--panel-2); border-radius: 10px; padding: 4px; margin-bottom: 22px; }
+.auth-tab {
+  flex: 1; background: none; border: none; color: var(--muted); font-family: var(--mono); font-size: 12px;
+  letter-spacing: .04em; padding: 9px 0; border-radius: 7px; cursor: pointer; transition: all .15s ease;
+}
+.auth-tab.active { background: linear-gradient(135deg, #f5ab3d, #e8862e); color: #241304; font-weight: 700; }
+
+.auth-form { flex-direction: column; gap: 6px; }
+.auth-form[hidden] { display: none; }
+.auth-form:not([hidden]) { display: flex; }
+.auth-form label { font-family: var(--mono); font-size: 11px; color: var(--muted-2); letter-spacing: .05em; margin-top: 10px; }
+.auth-form input {
+  background: var(--panel-2); border: 1px solid var(--line); color: var(--text); border-radius: 8px;
+  padding: 11px 13px; font-size: 13.5px; font-family: var(--sans); outline: none; transition: border-color .15s ease;
+}
+.auth-form input:focus { border-color: var(--amber); }
+.auth-hint { font-size: 11px; color: var(--muted-2); margin: 2px 0 0; }
+.auth-error { font-size: 12px; color: var(--red); min-height: 16px; margin: 8px 0 0; }
+.auth-link { font-family: var(--mono); font-size: 11px; color: var(--muted); text-decoration: none; margin-top: 8px; display: inline-block; }
+.auth-link:hover { color: var(--amber); }
+.auth-submit { margin-top: 14px; }
+
+@media (max-width: 980px) {
+  .landing { grid-template-columns: 1fr; padding: 40px 24px; gap: 20px; }
+  .landing-hero { padding: 20px 0 0; text-align: left; }
+  .hero-features { display: none; }
+  .landing-auth { padding-bottom: 40px; }
+}

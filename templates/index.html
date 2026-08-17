@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TRACE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<div class="bg-glow" aria-hidden="true"></div>
+<div class="aurora" aria-hidden="true"></div>
+<div class="scanlines" aria-hidden="true"></div>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="brand-mark">◈</span>
+    <span class="brand-name">TRACE</span>
+  </div>
+  <div class="topbar-right">
+    <span class="user-greeting">{{ user_name }}</span>
+    <button class="history-btn" id="historyBtn">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg>
+      History
+    </button>
+    <button class="history-btn" id="logoutBtn">Log out</button>
+    <span class="status-pill" id="statusPill"><span class="dot"></span>idle</span>
+  </div>
+</header>
+
+<div class="drawer-overlay" id="drawerOverlay"></div>
+<aside class="history-drawer" id="historyDrawer">
+  <div class="drawer-head">
+    <span class="panel-eyebrow">PAST SCANS</span>
+    <button class="drawer-close" id="drawerClose">✕</button>
+  </div>
+  <div class="history-list" id="historyList">
+    <p class="history-empty" id="historyEmpty">No scans yet — run your first analysis to see it here.</p>
+  </div>
+</aside>
+
+<main class="console">
+
+  <section class="panel intake" id="intakePanel">
+    <div class="panel-head">
+      <span class="panel-eyebrow">01 — INTAKE</span>
+      <h2>Submit a clip for analysis</h2>
+      <p class="panel-sub">Checks visual frames and the audio track for signs of manipulation, and shows exactly where.</p>
+    </div>
+
+    <div class="dropzone" id="dropzone">
+      <input type="file" id="fileInput" accept="video/mp4,video/quicktime,video/x-msvideo,video/x-matroska,video/webm" hidden>
+      <div class="dropzone-inner" id="dropzoneInner">
+        <div class="sweep" id="dropSweep"></div>
+        <svg class="dz-icon" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">
+          <path d="M23 7l-7 5 7 5V7z"/>
+          <rect x="1" y="5" width="15" height="14" rx="2"/>
+        </svg>
+        <p class="dz-title">Drop a video, or click to browse</p>
+        <p class="dz-hint">MP4 · MOV · AVI · MKV · WEBM — up to 200MB</p>
+      </div>
+      <video id="previewVideo" class="preview-video" hidden controls></video>
+    </div>
+
+    <button class="btn-primary" id="analyzeBtn" disabled>Run scan</button>
+
+    <div class="or-divider"><span>or</span></div>
+
+    <div class="url-row">
+      <input type="text" id="urlInput" placeholder="Paste a video link (TikTok, YouTube, etc.)">
+      <button class="btn-secondary" id="urlScanBtn">Scan link</button>
+    </div>
+
+    <div class="bookmarklet-box">
+      <span class="bookmarklet-label">One-click from any video page</span>
+      <p class="bookmarklet-hint">Drag this to your bookmarks bar. On any video's page, click it to scan the current link instantly.</p>
+      <a href="#" class="bookmarklet-link" id="bookmarkletLink" onclick="return false;">📎 Scan with TRACE</a>
+    </div>
+
+    <div class="progress-wrap" id="progressWrap" hidden>
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+      <p class="progress-label" id="progressLabel">Extracting frames…</p>
+    </div>
+  </section>
+
+  <section class="panel results" id="resultsPanel">
+    <div class="empty-state" id="emptyState">
+      <span class="panel-eyebrow">02 — READOUT</span>
+      <h2>Awaiting a sample</h2>
+      <p class="panel-sub">Results — alteration score, frame-by-frame heatmap, and audio spectrogram — render here once a scan completes.</p>
+    </div>
+
+    <div id="readout" hidden>
+      <div class="verdict-row">
+        <div class="gauge-wrap">
+          <svg viewBox="0 0 200 118" class="speedo">
+            <defs>
+              <linearGradient id="speedoGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#35d692"/>
+                <stop offset="50%" stop-color="#f5ab3d"/>
+                <stop offset="100%" stop-color="#ef5257"/>
+              </linearGradient>
+            </defs>
+            <path d="M 20 100 A 80 80 0 0 1 180 100" class="speedo-track"/>
+            <path d="M 20 100 A 80 80 0 0 1 180 100" class="speedo-arc" stroke="url(#speedoGrad)"/>
+            <g id="speedoNeedle" class="speedo-needle">
+              <line x1="100" y1="100" x2="100" y2="30"/>
+              <circle cx="100" cy="100" r="6"/>
+            </g>
+          </svg>
+          <div class="gauge-center">
+            <span class="gauge-score" id="gaugeScore">--</span>
+            <span class="gauge-unit">likely altered</span>
+          </div>
+        </div>
+        <div class="verdict-detail">
+          <span class="panel-eyebrow">VERDICT</span>
+          <h1 class="verdict-label" id="verdictLabel">—</h1>
+          <p class="verdict-desc" id="verdictDesc">Run a scan to see a result.</p>
+
+          <div class="technique-box" id="techniqueBox" hidden>
+            <span class="technique-label" id="techniqueLabel">—</span>
+            <p class="technique-desc" id="techniqueDesc"></p>
+          </div>
+
+          <div id="groqBox" class="technique-box" hidden style="margin-top:10px;">
+            <span class="technique-label" id="groqLabel">Groq AI review</span>
+            <p class="technique-desc" id="groqDesc"></p>
+          </div>
+
+          <div class="submeter-row">
+            <div class="submeter">
+              <span class="submeter-label">visual signal</span>
+              <div class="submeter-track"><div class="submeter-fill sw-video" id="videoMeter"></div></div>
+              <span class="submeter-val" id="videoMeterVal">–</span>
+            </div>
+            <div class="submeter">
+              <span class="submeter-label">audio signal</span>
+              <div class="submeter-track"><div class="submeter-fill sw-audio" id="audioMeter"></div></div>
+              <span class="submeter-val" id="audioMeterVal">–</span>
+            </div>
+          </div>
+
+          <button class="btn-report" id="reportBtn" hidden>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
+            Download report (PDF)
+          </button>
+
+          <div class="cred-box" id="credBox" hidden>
+            <div class="cred-icon" id="credIcon">©</div>
+            <div class="cred-text">
+              <span class="cred-title" id="credTitle">Content Credentials</span>
+              <p class="cred-desc" id="credDesc"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="frame-stage">
+        <span class="panel-eyebrow">FRAME EVIDENCE — click the timeline to inspect a frame</span>
+        <div class="stage-body">
+          <img id="stageImg" class="stage-img" alt="Annotated frame">
+          <div class="stage-side">
+            <div class="signal-bars" id="signalBars"></div>
+          </div>
+        </div>
+        <div class="timeline-wrap">
+          <canvas id="timelineCanvas" height="46"></canvas>
+        </div>
+      </div>
+
+      <div class="audio-stage" id="audioStage">
+        <span class="panel-eyebrow">AUDIO SPECTROGRAM</span>
+        <img id="spectrogramImg" class="spectrogram-img" alt="Audio spectrogram">
+        <div class="audio-signals" id="audioSignals"></div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<button class="chat-fab" id="chatFab" aria-label="Open assistant">
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+</button>
+<div class="chat-panel" id="chatPanel">
+  <div class="chat-head">
+    <div>
+      <span class="panel-eyebrow">ASK TRACE</span>
+      <p class="chat-sub">Questions about your scan or how it works</p>
+    </div>
+    <button class="drawer-close" id="chatClose">✕</button>
+  </div>
+  <div class="chat-messages" id="chatMessages">
+    <div class="msg msg-bot">Hey! Ask me about your scan, the heatmap, the score, or how the detection works.</div>
+  </div>
+  <form class="chat-input-row" id="chatForm">
+    <input type="text" id="chatInput" placeholder="Ask a question…" autocomplete="off">
+    <button type="submit" class="chat-send">↑</button>
+  </form>
+</div>
+
+<script src="{{ url_for('static', filename='js/particles.js') }}"></script>
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>

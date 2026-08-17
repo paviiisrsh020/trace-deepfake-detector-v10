@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TRACE — See what the camera didn't</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=Sora:wght@600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
+</head>
+<body class="auth-body">
+
+<div class="bg-glow" aria-hidden="true"></div>
+<div class="scanlines" aria-hidden="true"></div>
+
+<div class="landing">
+
+  <div class="landing-hero">
+    <div class="auth-brand">
+      <span class="brand-mark">◈</span>
+      <span class="brand-name">TRACE</span>
+    </div>
+
+    <h1 class="hero-headline">Every edit<br>leaves a <span class="hero-accent">trace.</span></h1>
+    <p class="hero-sub">Upload a clip or paste a link. TRACE checks the frames and the audio for the fingerprints editing leaves behind — then shows you exactly where, not just a yes or no.</p>
+
+    <div class="hero-features">
+      <div class="hero-feature">
+        <span class="hero-feature-icon">◎</span>
+        <div>
+          <span class="hero-feature-title">Frame-level heatmaps</span>
+          <p class="hero-feature-desc">See which region of which frame triggered the flag.</p>
+        </div>
+      </div>
+      <div class="hero-feature">
+        <span class="hero-feature-icon">≋</span>
+        <div>
+          <span class="hero-feature-title">Visual + audio, together</span>
+          <p class="hero-feature-desc">Spectrogram analysis runs alongside frame forensics.</p>
+        </div>
+      </div>
+      <div class="hero-feature">
+        <span class="hero-feature-icon">✎</span>
+        <div>
+          <span class="hero-feature-title">Plain-language explanations</span>
+          <p class="hero-feature-desc">Every score comes with why, in words a human wrote.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="landing-auth">
+    <div class="auth-card">
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="tabLogin">Sign in</button>
+        <button class="auth-tab" id="tabSignup">Create account</button>
+      </div>
+
+      <form id="loginForm" class="auth-form">
+        <label>Email</label>
+        <input type="email" id="loginEmail" required autocomplete="email">
+        <label>Password</label>
+        <input type="password" id="loginPassword" required autocomplete="current-password">
+        <a href="#" class="auth-link" id="forgotLink">Forgot password?</a>
+        <p class="auth-error" id="loginError"></p>
+        <button type="submit" class="btn-primary auth-submit">Sign in</button>
+      </form>
+
+      <form id="forgotForm" class="auth-form" hidden>
+        <label>Email</label>
+        <input type="email" id="forgotEmail" required autocomplete="email">
+        <p class="auth-hint">We'll email you a link to reset your password.</p>
+        <p class="auth-error" id="forgotError"></p>
+        <p class="auth-hint" id="forgotSuccess" style="color: var(--green); display:none;">Check your email for a reset link.</p>
+        <button type="submit" class="btn-primary auth-submit">Send reset link</button>
+        <a href="#" class="auth-link" id="backToLogin">Back to sign in</a>
+      </form>
+
+      <form id="signupForm" class="auth-form" hidden>
+        <label>Name</label>
+        <input type="text" id="signupName" required autocomplete="name">
+        <label>Email</label>
+        <input type="email" id="signupEmail" required autocomplete="email">
+        <label>Password</label>
+        <input type="password" id="signupPassword" required autocomplete="new-password" minlength="6">
+        <p class="auth-hint">At least 6 characters</p>
+        <p class="auth-error" id="signupError"></p>
+        <button type="submit" class="btn-primary auth-submit">Create account</button>
+      </form>
+    </div>
+  </div>
+
+</div>
+
+<script src="{{ url_for('static', filename='js/particles.js') }}"></script>
+<script src="{{ url_for('static', filename='js/auth.js') }}"></script>
+</body>
+</html>
