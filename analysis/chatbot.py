@@ -101,7 +101,7 @@ def _call_groq(message, history=None):
         GROQ_URL,
         data=payload,
         headers={
-            "Authorization": f"Bearer {os.environ.get("GROQ_API_KEY", "").strip()}",
+            "Authorization": f"Bearer {os.environ.get('GROQ_API_KEY', '').strip()}",
             "Content-Type": "application/json",
         },
         method="POST",
